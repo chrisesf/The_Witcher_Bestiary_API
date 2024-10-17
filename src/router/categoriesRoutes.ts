@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { CategoryController } from "../controllers/classesController";
-import { CreateCategoryRequestBody } from "../types/classesTypes";
+import { CategoryController } from "../controllers/categoriesController";
+import { CreateCategoryRequestBody } from "../types/categoriesTypes";
 
 const categoryController = new CategoryController()
 

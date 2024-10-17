@@ -1,7 +1,7 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { CategoryDAO } from '../models/classesModel';
-import { Category } from '../models/classesModel';
-import { CreateCategoryRequestBody } from '../types/classesTypes';
+import { CategoryDAO } from '../models/categoriesModel';
+import { Category } from '../models/categoriesModel';
+import { CreateCategoryRequestBody } from '../types/categoriesTypes';
 
 export class CategoryController {
 
