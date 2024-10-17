@@ -13,7 +13,7 @@ class Category {
 class CategoryDAO {
   static async categoryInsert(category: Category) {
     const sql =
-      "INSERT INTO categories (name, description) VALUES ($1, $2) RETURNING *;"
+      "INSERT INTO categories (name, description) VALUES ($1, $2)"
     const values = [category.name, category.description]
 
     try {
@@ -27,7 +27,7 @@ class CategoryDAO {
 
   static async categoryUpdate(category: Category, id: number) {
     const sql =
-      "UPDATE categories SET name = $1, description = $2, updated_at = CURRENT_TIMESTAMP WHERE category_id = $3 RETURNING *;"
+      "UPDATE categories SET name = $1, description = $2, updated_at = CURRENT_TIMESTAMP WHERE category_id = $3"
     const values = [category.name, category.description, id]
 
     try {
@@ -40,7 +40,7 @@ class CategoryDAO {
   }
 
   static async categoryDelete(id: number) {
-    const sql = "DELETE FROM categories WHERE category_id = $1 RETURNING *;"
+    const sql = "DELETE FROM categories WHERE category_id = $1"
 
     try {
       const result = await dbcon.query(sql, [id])
