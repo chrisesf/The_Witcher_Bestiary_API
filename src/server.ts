@@ -1,12 +1,12 @@
-import { fastify } from 'fastify';
-import { connectDB } from './config/db-connect';
+import { fastify } from "fastify"
+import { connectDB } from "./config/db-connect"
 
-const app = fastify();
+const app = fastify()
 
-app.register(import('./router/classesRoutes'));
+app.register(import("./router/categoriesRoutes"))
 
-connectDB();
+connectDB()
 
-app.listen({ 
-    port: 3333 
-});
+app.listen({
+  port: 3333,
+})
