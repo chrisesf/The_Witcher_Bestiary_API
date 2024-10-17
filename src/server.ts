@@ -3,7 +3,7 @@ import { connectDB } from './config/db-connect';
 
 const app = fastify();
 
-app.register(import('./router/userRoutes'));
+app.register(import('./router/classesRoutes'));
 
 connectDB();
 

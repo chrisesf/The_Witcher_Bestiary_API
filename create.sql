@@ -9,21 +9,24 @@ CREATE TABLE loots (
     buy_price DECIMAL(10, 2),
     craftable BOOLEAN,
     image TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE locations (
     location_id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE classes (
-    class_id SERIAL PRIMARY KEY,
+CREATE TABLE categories (
+    category_id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE creatures (
@@ -31,9 +34,10 @@ CREATE TABLE creatures (
     name VARCHAR(255) NOT NULL,
     description TEXT,
     image TEXT,
-    class_id INT,
-    FOREIGN KEY (class_id) REFERENCES classes(class_id),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    category_id INT,
+    FOREIGN KEY (category_id) REFERENCES categories(category_id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE items (
@@ -42,7 +46,8 @@ CREATE TABLE items (
     description TEXT,
     item_type VARCHAR(100),
     image TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE drop (
@@ -51,7 +56,8 @@ CREATE TABLE drop (
     PRIMARY KEY (loot_id, creature_id),
     FOREIGN KEY (loot_id) REFERENCES loots(loot_id),
     FOREIGN KEY (creature_id) REFERENCES creatures(creature_id),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE occurrence (
@@ -60,7 +66,8 @@ CREATE TABLE occurrence (
     PRIMARY KEY (location_id, creature_id),
     FOREIGN KEY (location_id) REFERENCES locations(location_id),
     FOREIGN KEY (creature_id) REFERENCES creatures(creature_id),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE variation (
@@ -69,7 +76,8 @@ CREATE TABLE variation (
     PRIMARY KEY (creature_id, variation_id),
     FOREIGN KEY (creature_id) REFERENCES creatures(creature_id),
     FOREIGN KEY (variation_id) REFERENCES creatures(creature_id),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE weakness (
@@ -78,5 +86,6 @@ CREATE TABLE weakness (
     PRIMARY KEY (item_id, creature_id),
     FOREIGN KEY (item_id) REFERENCES items(item_id),
     FOREIGN KEY (creature_id) REFERENCES creatures(creature_id),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
