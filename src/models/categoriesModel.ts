@@ -1,12 +1,12 @@
 import { dbcon } from "../config/db-connect"
 
 class Category {
-  newID: string
+  newId: string
   name: string
   description: string
 
-  constructor(newID: string, name: string, description: string) {
-    this.newID = newID
+  constructor(newId: string, name: string, description: string) {
+    this.newId = newId
     this.name = name
     this.description = description
   }
@@ -15,7 +15,7 @@ class Category {
 class CategoryDAO {
   static async categoryInsert(category: Category) {
     const sql = "INSERT INTO categories (category_id, name, description) VALUES ($1, $2, $3)";
-    const values = [category.newID, category.name, category.description];
+    const values = [category.newId, category.name, category.description];
 
     try {
       const result = await dbcon.query(sql, values);
@@ -29,7 +29,7 @@ class CategoryDAO {
 
   static async categoryUpdate(category: Category, id: string) {
     const sql = "UPDATE categories SET category_id = $1, name = $2, description = $3 WHERE category_id = $4"
-    const values = [category.newID, category.name, category.description, id]
+    const values = [category.newId, category.name, category.description, id]
 
     try {
       const result = await dbcon.query(sql, values)

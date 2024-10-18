@@ -6,26 +6,32 @@ import { randomUUID } from "node:crypto"
 
 export class CategoryController {
   async create(
-    req: FastifyRequest<{ Body: CategoryRequestBody }>,
+    req: FastifyRequest<{ Body: CategoryRequestBody[] }>,
     reply: FastifyReply,
   ) {
-    const { name, description } = req.body
-    const newID = randomUUID()
+    const categories = req.body;
 
-    const category: Category = {
-      newID: newID,
-      name: name,
-      description: description,
-    }
+    categories.forEach(async (categoryData) => {
+      const { name, description } = categoryData;
+      const newId = randomUUID()
 
-    try {
-      await CategoryDAO.categoryInsert(category)
-      return reply.status(201).send({ message: "Categoria criada com sucesso" })
-    } catch (error) {
-      console.log({ error })
-      return reply.status(500).send({ error: "Erro ao criar categoria" })
-    }
+      const component: Category = {
+        newId: newId,
+        name: name,
+        description: description
+      };
+
+      try {
+        await CategoryDAO.categoryInsert(component);
+      } catch (error) {
+        console.log({ error });
+        return reply.status(500).send({ error: "Erro ao criar componente" });
+      }
+    });
+
+    return reply.status(201).send({ message: "Componentes criados com sucesso" });
   }
+
 
   async update(
     req: FastifyRequest<{ Body: CategoryRequestBody }>,
@@ -35,7 +41,7 @@ export class CategoryController {
     const { id } = req.params as { id: string }
 
     const category: Category = {
-      newID: id,
+      newId: id,
       name: name,
       description: description,
     }
