@@ -7,6 +7,7 @@ app.register(import("./router/categoriesRoutes"))
 app.register(import("./router/creaturesRoutes"))
 app.register(import("./router/itensRoutes"))
 app.register(import("./router/locationsRoutes"))
+app.register(import("./router/componentsRoutes"))
 
 connectDB()
 
