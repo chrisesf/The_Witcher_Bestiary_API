@@ -5,6 +5,8 @@ const app = fastify()
 
 app.register(import("./router/categoriesRoutes"))
 app.register(import("./router/creaturesRoutes"))
+app.register(import("./router/itensRoutes"))
+app.register(import("./router/locationsRoutes"))
 
 connectDB()
 

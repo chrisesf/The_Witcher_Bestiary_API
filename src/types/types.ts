@@ -11,3 +11,17 @@ export type CreatureRequestBody = {
   image: string
   category_id: string
 }
+
+export type ItensRequestBody = {
+  id: string
+  name: string
+  description: string
+  item_type: string
+  image: string
+}
+
+export type LocationsRequestBody = {
+  id: string
+  name: string
+  description: string
+}
