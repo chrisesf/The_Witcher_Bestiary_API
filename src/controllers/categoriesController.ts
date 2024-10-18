@@ -1,16 +1,19 @@
 import { FastifyRequest, FastifyReply } from "fastify"
 import { CategoryDAO } from "../models/categoriesModel"
 import { Category } from "../models/categoriesModel"
-import { CreateCategoryRequestBody } from "../types/categoriesTypes"
+import { CategoryRequestBody } from "../types/types"
+import { randomUUID } from "node:crypto"
 
 export class CategoryController {
   async create(
-    req: FastifyRequest<{ Body: CreateCategoryRequestBody }>,
+    req: FastifyRequest<{ Body: CategoryRequestBody }>,
     reply: FastifyReply,
   ) {
     const { name, description } = req.body
+    const newID = randomUUID()
 
     const category: Category = {
+      newID: newID,
       name: name,
       description: description,
     }
@@ -25,13 +28,14 @@ export class CategoryController {
   }
 
   async update(
-    req: FastifyRequest<{ Body: CreateCategoryRequestBody }>,
+    req: FastifyRequest<{ Body: CategoryRequestBody }>,
     reply: FastifyReply,
   ) {
     const { name, description } = req.body
-    const { id } = req.params as { id: number }
+    const { id } = req.params as { id: string }
 
     const category: Category = {
+      newID: id,
       name: name,
       description: description,
     }
@@ -41,9 +45,7 @@ export class CategoryController {
       if (result.rowCount === 0) {
         return reply.status(404).send({ error: "Categoria não encontrada" })
       }
-      return reply
-        .status(200)
-        .send({ message: "Categoria atualizada com sucesso" })
+      return reply.status(200).send({ message: "Categoria atualizada com sucesso" })
     } catch (error) {
       console.log({ error })
       return reply.status(500).send({ error: "Erro ao atualizar categoria" })
@@ -51,7 +53,7 @@ export class CategoryController {
   }
 
   async delete(req: FastifyRequest, reply: FastifyReply) {
-    const { id } = req.params as { id: number }
+    const { id } = req.params as { id: string }
 
     try {
       const category = await CategoryDAO.categoryDelete(id)
@@ -69,8 +71,8 @@ export class CategoryController {
 
   async list(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const categories = await CategoryDAO.categoryList()
-      return reply.status(200).send(categories)
+      const categorie = await CategoryDAO.categoryList()
+      return reply.status(200).send(categorie)
     } catch (error) {
       console.log({ error })
       return reply.status(500).send({ error: "Erro ao buscar categorias" })
@@ -79,7 +81,7 @@ export class CategoryController {
 
   async getById(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const { id } = req.params as { id: number }
+      const { id } = req.params as { id: string }
       const category = await CategoryDAO.getCategoryById(id)
 
       if (!category) {
