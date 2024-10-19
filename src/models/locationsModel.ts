@@ -1,12 +1,10 @@
 import { dbcon } from "../config/db-connect"
 
 class Location {
-    newId: string
     name: string
     description: string
 
-    constructor(newId: string, name: string, description: string) {
-        this.newId = newId
+    constructor(name: string, description: string) {
         this.name = name
         this.description = description
     }
@@ -14,8 +12,8 @@ class Location {
 
 class LocationDAO {
     static async locationInsert(location: Location) {
-        const sql = "INSERT INTO locations (location_id, name, description) VALUES ($1, $2, $3)";
-        const values = [location.newId, location.name, location.description];
+        const sql = "INSERT INTO location (name, description) VALUES ($1, $2)";
+        const values = [location.name, location.description];
 
         try {
             const result = await dbcon.query(sql, values);
@@ -27,8 +25,8 @@ class LocationDAO {
     }
 
 
-    static async locationUpdate(location: Location, id: string) {
-        const sql = "UPDATE locations SET name = $1, description = $2  WHERE location_id = $3"
+    static async locationUpdate(location: Location, id: number) {
+        const sql = "UPDATE location SET name = $1, description = $2  WHERE location_id = $3"
         const values = [location.name, location.description, id];
 
         try {
@@ -40,8 +38,8 @@ class LocationDAO {
         }
     }
 
-    static async locationDelete(id: string) {
-        const sql = "DELETE FROM locations WHERE location_id = $1"
+    static async locationDelete(id: number) {
+        const sql = "DELETE FROM location WHERE location_id = $1"
 
         try {
             const result = await dbcon.query(sql, [id])
@@ -53,7 +51,7 @@ class LocationDAO {
     }
 
     static async locationList() {
-        const sql = "SELECT location_id AS id, name AS nome, description AS descrição FROM locations"
+        const sql = "SELECT location_id AS id, name, description, created_at, updated_at FROM location"
 
         try {
             const result = await dbcon.query(sql)
@@ -64,8 +62,8 @@ class LocationDAO {
         }
     }
 
-    static async getLocationById(id: string) {
-        const sql = "SELECT name AS nome, description AS descrição FROM locations WHERE location_id = $1"
+    static async getLocationById(id: number) {
+        const sql = "SELECT name AS nome, description, created_at, updated_at FROM location WHERE location_id = $1"
 
         try {
             const result = await dbcon.query(sql, [id])

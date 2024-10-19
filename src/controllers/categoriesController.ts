@@ -2,7 +2,6 @@ import { FastifyRequest, FastifyReply } from "fastify"
 import { CategoryDAO } from "../models/categoriesModel"
 import { Category } from "../models/categoriesModel"
 import { CategoryRequestBody } from "../types/types"
-import { randomUUID } from "node:crypto"
 
 export class CategoryController {
   async create(
@@ -13,10 +12,8 @@ export class CategoryController {
 
     categories.forEach(async (categoryData) => {
       const { name, description } = categoryData;
-      const newId = randomUUID()
 
       const component: Category = {
-        newId: newId,
         name: name,
         description: description
       };
@@ -41,7 +38,6 @@ export class CategoryController {
     const { id } = req.params as { id: string }
 
     const category: Category = {
-      newId: id,
       name: name,
       description: description,
     }

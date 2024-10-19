@@ -1,11 +1,11 @@
 export type CategoryRequestBody = {
-  id: string
+  id: number
   name: string
   description: string
 }
 
 export type CreatureRequestBody = {
-  id: string
+  id: number
   name: string
   description: string
   image: string
@@ -13,7 +13,7 @@ export type CreatureRequestBody = {
 }
 
 export type ItensRequestBody = {
-  id: string
+  id: number
   name: string
   description: string
   item_type: string
@@ -21,13 +21,13 @@ export type ItensRequestBody = {
 }
 
 export type LocationsRequestBody = {
-  id: string
+  id: number
   name: string
   description: string
 }
 
 export type ComponentsRequestBody = {
-  id: string
+  id: number
   name: string
   description: string,
   type: string,

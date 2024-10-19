@@ -1,12 +1,10 @@
 import { dbcon } from "../config/db-connect"
 
 class Category {
-  newId: string
   name: string
   description: string
 
-  constructor(newId: string, name: string, description: string) {
-    this.newId = newId
+  constructor(name: string, description: string) {
     this.name = name
     this.description = description
   }
@@ -14,8 +12,8 @@ class Category {
 
 class CategoryDAO {
   static async categoryInsert(category: Category) {
-    const sql = "INSERT INTO categories (category_id, name, description) VALUES ($1, $2, $3)";
-    const values = [category.newId, category.name, category.description];
+    const sql = "INSERT INTO category (name, description) VALUES ($1, $2)";
+    const values = [category.name, category.description];
 
     try {
       const result = await dbcon.query(sql, values);
@@ -27,9 +25,9 @@ class CategoryDAO {
   }
 
 
-  static async categoryUpdate(category: Category, id: string) {
-    const sql = "UPDATE categories SET category_id = $1, name = $2, description = $3 WHERE category_id = $4"
-    const values = [category.newId, category.name, category.description, id]
+  static async categoryUpdate(category: Category, id: number) {
+    const sql = "UPDATE category SET name = $1, description = $2 WHERE category_id = $3"
+    const values = [category.name, category.description, id]
 
     try {
       const result = await dbcon.query(sql, values)
@@ -40,8 +38,8 @@ class CategoryDAO {
     }
   }
 
-  static async categoryDelete(id: string) {
-    const sql = "DELETE FROM categories WHERE category_id = $1"
+  static async categoryDelete(id: number) {
+    const sql = "DELETE FROM category WHERE category_id = $1"
 
     try {
       const result = await dbcon.query(sql, [id])
@@ -53,7 +51,7 @@ class CategoryDAO {
   }
 
   static async categoryList() {
-    const sql = "SELECT category_id AS id, name AS nome, description AS descrição FROM categories"
+    const sql = "SELECT category_id AS id, name, description, created_at, updated_at FROM category"
 
     try {
       const result = await dbcon.query(sql)
@@ -64,8 +62,8 @@ class CategoryDAO {
     }
   }
 
-  static async getCategoryById(id: string) {
-    const sql = "SELECT name AS nome, description AS descrição FROM categories WHERE category_id = $1"
+  static async getCategoryById(id: number) {
+    const sql = "SELECT name, description FROM category, created_at, updated_at WHERE category_id = $1"
 
     try {
       const result = await dbcon.query(sql, [id])

@@ -2,7 +2,6 @@ import { FastifyRequest, FastifyReply } from "fastify"
 import { CreatureDAO } from "../models/creaturesModel"
 import { Creature } from "../models/creaturesModel"
 import { CreatureRequestBody } from "../types/types"
-import { randomUUID } from "node:crypto"
 
 export class CreatureController {
     async create(
@@ -13,10 +12,8 @@ export class CreatureController {
 
         creatures.forEach(async (creatureData) => {
             const { name, description, image, category_id } = creatureData;
-            const newId = randomUUID()
 
             const creature: Creature = {
-                newId: newId,
                 name: name,
                 description: description,
                 image: image,
@@ -43,7 +40,6 @@ export class CreatureController {
         const { id } = req.params as { id: string }
 
         const creature: Creature = {
-            newId: id,
             name: name,
             description: description,
             image: image,

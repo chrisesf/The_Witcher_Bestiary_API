@@ -2,7 +2,6 @@ import { FastifyRequest, FastifyReply } from "fastify"
 import { ComponentDAO } from "../models/componentModel"
 import { Component } from "../models/componentModel"
 import { ComponentsRequestBody } from "../types/types"
-import { randomUUID } from "node:crypto"
 
 export class ComponentController {
     async create(
@@ -13,10 +12,8 @@ export class ComponentController {
 
         componentes.forEach(async (componentData) => {
             const { name, description, type, tier, base_value, sell_price, buy_price, craftable, image } = componentData;
-            const newId = randomUUID()
 
             const component: Component = {
-                newId: newId,
                 name: name,
                 description: description,
                 type: type,
@@ -48,7 +45,6 @@ export class ComponentController {
         const { id } = req.params as { id: string }
 
         const component: Component = {
-            newId: id,
             name: name,
             description: description,
             type: type,

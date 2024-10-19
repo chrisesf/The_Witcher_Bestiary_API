@@ -1,14 +1,12 @@
 import { dbcon } from "../config/db-connect"
 
 class Item {
-    newId: string
     name: string
     description: string
     item_type: string
     image: string
 
-    constructor(newId: string, name: string, description: string, item_type: string, image: string) {
-        this.newId = newId
+    constructor(name: string, description: string, item_type: string, image: string) {
         this.name = name
         this.description = description
         this.image = image
@@ -18,8 +16,8 @@ class Item {
 
 class ItemDAO {
     static async itemInsert(item: Item) {
-        const sql = "INSERT INTO itens (item_id, name, description, image, item_type) VALUES ($1, $2, $3, $4, $5)";
-        const values = [item.newId, item.name, item.description, item.image, item.item_type];
+        const sql = "INSERT INTO item (name, description, image, item_type) VALUES ($1, $2, $3, $4)";
+        const values = [item.name, item.description, item.image, item.item_type];
 
         try {
             const result = await dbcon.query(sql, values);
@@ -31,8 +29,8 @@ class ItemDAO {
     }
 
 
-    static async itemUpdate(item: Item, id: string) {
-        const sql = "UPDATE itens SET name = $1, description = $2, image = $3, item_type = $4 WHERE item_id = $5"
+    static async itemUpdate(item: Item, id: number) {
+        const sql = "UPDATE item SET name = $1, description = $2, image = $3, item_type = $4 WHERE item_id = $5"
         const values = [item.name, item.description, item.image, item.item_type, id];
 
         try {
@@ -44,8 +42,8 @@ class ItemDAO {
         }
     }
 
-    static async itemDelete(id: string) {
-        const sql = "DELETE FROM itens WHERE item_id = $1"
+    static async itemDelete(id: number) {
+        const sql = "DELETE FROM item WHERE item_id = $1"
 
         try {
             const result = await dbcon.query(sql, [id])
@@ -57,19 +55,19 @@ class ItemDAO {
     }
 
     static async itemList() {
-        const sql = "SELECT item_id AS id, name AS nome, description AS descrição, image AS imagem, item_type AS tipo FROM itens"
+        const sql = "SELECT item_id AS id, name, description, image, item_type AS type, created_at, updated_at FROM item"
 
         try {
             const result = await dbcon.query(sql)
             return result.rows
         } catch (error) {
-            console.error("Erro ao buscar itens:", error)
-            throw new Error("Erro ao buscar itens")
+            console.error("Erro ao buscar item:", error)
+            throw new Error("Erro ao buscar item")
         }
     }
 
-    static async getItemById(id: string) {
-        const sql = "SELECT name AS nome, description AS descrição, image AS imagem, item_type AS tipo FROM itens WHERE item_id = $1"
+    static async getItemById(id: number) {
+        const sql = "SELECT name, description, image, item_type AS type, created_at, updated_at FROM item WHERE item_id = $1"
 
         try {
             const result = await dbcon.query(sql, [id])

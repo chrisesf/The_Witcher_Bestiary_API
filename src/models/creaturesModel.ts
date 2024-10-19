@@ -1,14 +1,12 @@
 import { dbcon } from "../config/db-connect"
 
 class Creature {
-    newId: string
     name: string
     description: string
     image: string
     category_id: string
 
-    constructor(newId: string, name: string, description: string, image: string, category_id: string) {
-        this.newId = newId
+    constructor(name: string, description: string, image: string, category_id: string) {
         this.name = name
         this.description = description
         this.image = image
@@ -18,8 +16,8 @@ class Creature {
 
 class CreatureDAO {
     static async creatureInsert(creature: Creature) {
-        const sql = "INSERT INTO creatures (creature_id, name, description, image, category_id) VALUES ($1, $2, $3, $4, $5)";
-        const values = [creature.newId, creature.name, creature.description, creature.image, creature.category_id];
+        const sql = "INSERT INTO creature (name, description, image, category_id) VALUES ($1, $2, $3, $4)";
+        const values = [creature.name, creature.description, creature.image, creature.category_id];
 
         try {
             const result = await dbcon.query(sql, values);
@@ -31,8 +29,8 @@ class CreatureDAO {
     }
 
 
-    static async creatureUpdate(creature: Creature, id: string) {
-        const sql = "UPDATE creatures SET name = $1, description = $2, image = $3, category_id = $4 WHERE creature_id = $5"
+    static async creatureUpdate(creature: Creature, id: number) {
+        const sql = "UPDATE creature SET name = $1, description = $2, image = $3, category_id = $4 WHERE creature_id = $5"
         const values = [creature.name, creature.description, creature.image, creature.category_id, id];
 
         try {
@@ -44,8 +42,8 @@ class CreatureDAO {
         }
     }
 
-    static async creatureDelete(id: string) {
-        const sql = "DELETE FROM creatures WHERE creature_id = $1"
+    static async creatureDelete(id: number) {
+        const sql = "DELETE FROM creature WHERE creature_id = $1"
 
         try {
             const result = await dbcon.query(sql, [id])
@@ -57,7 +55,7 @@ class CreatureDAO {
     }
 
     static async creatureList() {
-        const sql = "SELECT creature_id AS id, name AS nome, description AS descrição, image AS imagem, category_id AS categoria FROM creatures"
+        const sql = "SELECT creature_id AS id, name, description, image, category_id AS category, created_at, updated_at FROM creature"
 
         try {
             const result = await dbcon.query(sql)
@@ -68,8 +66,8 @@ class CreatureDAO {
         }
     }
 
-    static async getCreatureById(id: string) {
-        const sql = "SELECT name AS nome, description AS descrição, image AS imagem, category_id AS categoria FROM creatures WHERE creature_id = $1"
+    static async getCreatureById(id: number) {
+        const sql = "SELECT name, description, image, category_id AS category, created_at, updated_at FROM creature WHERE creature_id = $1"
 
         try {
             const result = await dbcon.query(sql, [id])
