@@ -54,15 +54,84 @@ class CreatureDAO {
         }
     }
 
-    static async creatureList() {
-        const sql = "SELECT creature_id AS id, name, description, image, category_id AS category, created_at, updated_at FROM creature"
+    static async creatureList(page: number = 1, limit: number = 10) {
+        const offset = (page - 1) * limit;
+
+        const sql = `
+            SELECT 
+                creature.creature_id AS id,
+                creature.name,
+                creature.description,
+                STRING_AGG(weakness.item_id::text, ',') AS weaknesses,
+                creature.image,
+                creature.category_id AS category,
+                creature.created_at,
+                creature.updated_at 
+            FROM 
+                creature 
+            JOIN 
+                weakness ON creature.creature_id = weakness.creature_id 
+            GROUP BY 
+                creature.creature_id, creature.name, creature.description, creature.image, creature.category_id, creature.created_at, creature.updated_at
+            LIMIT $1 OFFSET $2;
+            `
+       
+        const totalCountSQL = "SELECT COUNT(*) FROM creature;"
 
         try {
-            const result = await dbcon.query(sql)
-            return result.rows
+            const totalCountResult = await dbcon.query(totalCountSQL);
+            const totalCount = parseInt(totalCountResult.rows[0].count, 10);
+
+            const result = await dbcon.query(sql, [limit, offset]);
+
+            const creatures = result.rows.map(creature => {
+                const weaknessesArray = creature.weaknesses.split(',').map((item: string) => {
+                    return `localhost:3333/item/${item.trim()}`;
+                });
+
+                const categoryArray = `localhost:3333/category/${creature.category}`
+
+                return {
+                    id: creature.id,
+                    name: creature.name,
+                    description: creature.description,
+                    weaknesses: weaknessesArray,
+                    image: creature.image,
+                    category: [categoryArray],
+                    created_at: creature.created_at,
+                    updated_at: creature.updated_at,
+                };
+            });
+
+            const totalPages = Math.ceil(totalCount / limit);
+
+            let nextPage: string | null = null;
+            let previousPage: string | null = null;
+
+            if (page < totalPages) {
+                nextPage = `localhost:3333/creature?page=${page + 1}&limit=${limit}`;
+            } else {
+                nextPage = null;
+            }
+
+            if (page > 1) {
+                previousPage = `localhost:3333/creature?page=${page - 1}&limit=${limit}`;
+            } else {
+                previousPage = null;
+            }
+
+            const response = {
+                count: totalCount,
+                totalPages: totalPages,
+                next: nextPage,
+                previous: previousPage,
+                results: creatures,
+            };
+
+            return response;
         } catch (error) {
-            console.error("Erro ao buscar criaturas:", error)
-            throw new Error("Erro ao buscar criaturas")
+            console.error("Erro ao buscar criaturas com paginação:", error);
+            throw new Error("Erro ao buscar criaturas com paginação");
         }
     }
 

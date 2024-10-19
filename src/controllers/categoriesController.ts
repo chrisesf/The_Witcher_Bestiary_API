@@ -8,34 +8,35 @@ export class CategoryController {
     req: FastifyRequest<{ Body: CategoryRequestBody[] }>,
     reply: FastifyReply,
   ) {
-    const categories = req.body;
+    const categories = req.body
 
     categories.forEach(async (categoryData) => {
-      const { name, description } = categoryData;
+      const { name, description } = categoryData
 
       const component: Category = {
         name: name,
-        description: description
-      };
+        description: description,
+      }
 
       try {
-        await CategoryDAO.categoryInsert(component);
+        await CategoryDAO.categoryInsert(component)
       } catch (error) {
-        console.log({ error });
-        return reply.status(500).send({ error: "Erro ao criar componente" });
+        console.log({ error })
+        return reply.status(500).send({ error: "Erro ao criar componente" })
       }
-    });
+    })
 
-    return reply.status(201).send({ message: "Componentes criados com sucesso" });
+    return reply
+      .status(201)
+      .send({ message: "Componentes criados com sucesso" })
   }
-
 
   async update(
     req: FastifyRequest<{ Body: CategoryRequestBody }>,
     reply: FastifyReply,
   ) {
     const { name, description } = req.body
-    const { id } = req.params as { id: string }
+    const { id } = req.params as { id: number }
 
     const category: Category = {
       name: name,
@@ -47,7 +48,9 @@ export class CategoryController {
       if (result.rowCount === 0) {
         return reply.status(404).send({ error: "Categoria não encontrada" })
       }
-      return reply.status(200).send({ message: "Categoria atualizada com sucesso" })
+      return reply
+        .status(200)
+        .send({ message: "Categoria atualizada com sucesso" })
     } catch (error) {
       console.log({ error })
       return reply.status(500).send({ error: "Erro ao atualizar categoria" })
@@ -55,7 +58,7 @@ export class CategoryController {
   }
 
   async delete(req: FastifyRequest, reply: FastifyReply) {
-    const { id } = req.params as { id: string }
+    const { id } = req.params as { id: number }
 
     try {
       const category = await CategoryDAO.categoryDelete(id)
@@ -83,7 +86,7 @@ export class CategoryController {
 
   async getById(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const { id } = req.params as { id: string }
+      const { id } = req.params as { id: number }
       const category = await CategoryDAO.getCategoryById(id)
 
       if (!category) {

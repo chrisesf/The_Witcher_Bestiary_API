@@ -5,26 +5,38 @@ import { CategoryRequestBody } from "../types/types"
 const categoryController = new CategoryController()
 
 export default async function (app: FastifyInstance) {
-  app.post("/categories", async (req: FastifyRequest<{ Body: CategoryRequestBody }>, reply: FastifyReply,) => {
+  app.post(
+    "/category",
+    async (
+      req: FastifyRequest<{ Body: CategoryRequestBody[] }>,
+      reply: FastifyReply,
+    ) => {
       await categoryController.create(req, reply)
     },
   )
 
-  app.put("/categories/:id", async (req: FastifyRequest<{ Body: CategoryRequestBody }>, reply: FastifyReply) => {
+  app.put(
+    "/category/:id",
+    async (
+      req: FastifyRequest<{ Body: CategoryRequestBody }>,
+      reply: FastifyReply,
+    ) => {
       await categoryController.update(req, reply)
     },
   )
 
-  app.delete("/categories/:id", async (req: FastifyRequest, reply: FastifyReply) => {
+  app.delete(
+    "/category/:id",
+    async (req: FastifyRequest, reply: FastifyReply) => {
       await categoryController.delete(req, reply)
     },
   )
 
-  app.get("/categories", async (req: FastifyRequest, reply: FastifyReply) => {
+  app.get("/category", async (req: FastifyRequest, reply: FastifyReply) => {
     await categoryController.list(req, reply)
   })
 
-  app.get("/categories/:id", async (req: FastifyRequest, reply: FastifyReply) => {
+  app.get("/category/:id", async (req: FastifyRequest, reply: FastifyReply) => {
     await categoryController.getById(req, reply)
   })
 }

@@ -29,12 +29,17 @@ export type LocationsRequestBody = {
 export type ComponentsRequestBody = {
   id: number
   name: string
-  description: string,
-  type: string,
-  tier: string,
-  base_value: number,
-  sell_price: number,
-  buy_price: number,
-  craftable: boolean,
+  description: string
+  type: string
+  tier: string
+  base_value: number
+  sell_price: number
+  buy_price: number
+  craftable: boolean
   image: string
+}
+
+export type WeaknessRequestBody = {
+  creature_id: number
+  item_id: number
 }

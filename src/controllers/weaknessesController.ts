@@ -1,99 +1,126 @@
 import { FastifyRequest, FastifyReply } from "fastify"
-import { LocationDAO } from "../models/locationsModel"
-import { Location } from "../models/locationsModel"
-import { LocationsRequestBody } from "../types/types"
+import { WeaknessDAO } from "../models/weaknessesModel"
+import { Weakness } from "../models/weaknessesModel"
+import { WeaknessRequestBody } from "../types/types"
 
-export class LocationController {
-    async create(
-        req: FastifyRequest<{ Body: LocationsRequestBody[] }>,
-        reply: FastifyReply,
-    ) {
-        const locations = req.body;
+export class WeaknessController {
+  async create(
+    req: FastifyRequest<{ Body: WeaknessRequestBody[] }>,
+    reply: FastifyReply,
+  ) {
+    const weaknesses = req.body
 
-        locations.forEach(async (locationData) => {
-            const { name, description } = locationData;
+    weaknesses.forEach(async (weaknessData) => {
+      const { creature_id, item_id } = weaknessData
 
-            const location: Location = {
-                name: name,
-                description: description,
-            };
+      const weakness: Weakness = {
+        creature_id: creature_id,
+        item_id: item_id,
+      }
 
-            try {
-                await LocationDAO.locationInsert(location);
-            } catch (error) {
-                console.log({ error });
-                return reply.status(500).send({ error: "Erro ao criar localização" });
-            }
-        });
+      try {
+        await WeaknessDAO.weaknessInsert(weakness)
+      } catch (error) {
+        console.log({ error })
+        return reply.status(500).send({ error: "Erro ao criar fraqueza" })
+      }
+    })
 
-        return reply.status(201).send({ message: "Localizações criadas com sucesso" });
+    return reply.status(201).send({ message: "Fraquezas criadas com sucesso" })
+  }
+
+  async update(
+    req: FastifyRequest<{ Body: WeaknessRequestBody }>,
+    reply: FastifyReply,
+  ) {
+    const { creature_id, item_id } = req.body
+    const { creatureId, itemId } = req.params as {
+      creatureId: number
+      itemId: number
     }
 
-
-    async update(
-        req: FastifyRequest<{ Body: LocationsRequestBody }>,
-        reply: FastifyReply,
-    ) {
-        const { name, description } = req.body
-        const { id } = req.params as { id: string }
-
-        const location: Location = {
-            name: name,
-            description: description
-        }
-
-        try {
-            const result = await LocationDAO.locationUpdate(location, id)
-            if (result.rowCount === 0) {
-                return reply.status(404).send({ error: "Localização não encontrada" })
-            }
-            return reply.status(200).send({ message: "Localização atualizada com sucesso" })
-        } catch (error) {
-            console.log({ error })
-            return reply.status(500).send({ error: "Erro ao atualizar localização" })
-        }
+    const weakness: Weakness = {
+      creature_id: creature_id,
+      item_id: item_id,
     }
 
-    async delete(req: FastifyRequest, reply: FastifyReply) {
-        const { id } = req.params as { id: string }
+    try {
+      const result = await WeaknessDAO.weaknessUpdate(
+        weakness,
+        creatureId,
+        itemId,
+      )
+      if (result.rowCount === 0) {
+        return reply.status(404).send({ error: "Fraqueza não encontrada" })
+      }
+      return reply
+        .status(200)
+        .send({ message: "Fraqueza atualizada com sucesso" })
+    } catch (error) {
+      console.log({ error })
+      return reply.status(500).send({ error: "Erro ao atualizar fraqueza" })
+    }
+  }
 
-        try {
-            const location = await LocationDAO.locationDelete(id)
-
-            if (!location) {
-                return reply.status(404).send({ error: "Localização não encontrada" })
-            }
-
-            return reply.send(location)
-        } catch (error) {
-            console.log({ error })
-            return reply.status(500).send({ error: "Erro ao buscar localização" })
-        }
+  async delete(req: FastifyRequest, reply: FastifyReply) {
+    const { creatureId, itemId } = req.params as {
+      creatureId: number
+      itemId: number
     }
 
-    async list(req: FastifyRequest, reply: FastifyReply) {
-        try {
-            const location = await LocationDAO.locationList()
-            return reply.status(200).send(location)
-        } catch (error) {
-            console.log({ error })
-            return reply.status(500).send({ error: "Erro ao buscar localizações" })
-        }
+    try {
+      const weakness = await WeaknessDAO.weaknessDelete(creatureId, itemId)
+
+      if (!weakness) {
+        return reply.status(404).send({ error: "Fraqueza não encontrada" })
+      }
+
+      return reply.send(weakness)
+    } catch (error) {
+      console.log({ error })
+      return reply.status(500).send({ error: "Erro ao buscar fraqueza" })
     }
+  }
 
-    async getById(req: FastifyRequest, reply: FastifyReply) {
-        try {
-            const { id } = req.params as { id: string }
-            const location = await LocationDAO.getLocationById(id)
-
-            if (!location) {
-                return reply.status(404).send({ error: "Localização não encontrado" })
-            }
-
-            return reply.status(200).send(location)
-        } catch (error) {
-            console.log({ error })
-            return reply.status(500).send({ error: "Erro ao buscar localização" })
-        }
+  async list(req: FastifyRequest, reply: FastifyReply) {
+    try {
+      const weakness = await WeaknessDAO.weaknessList()
+      return reply.status(200).send(weakness)
+    } catch (error) {
+      console.log({ error })
+      return reply.status(500).send({ error: "Erro ao buscar fraquezas" })
     }
+  }
+
+  async weaknessGetById(req: FastifyRequest, reply: FastifyReply) {
+    try {
+      const { id } = req.params as { id: number }
+      const weakness = await WeaknessDAO.getWeaknessById(id)
+
+      if (!weakness) {
+        return reply.status(404).send({ error: "Fraqueza não encontrado" })
+      }
+
+      return reply.status(200).send(weakness)
+    } catch (error) {
+      console.log({ error })
+      return reply.status(500).send({ error: "Erro ao buscar fraqueza" })
+    }
+  }
+
+  async effectivenessGetById(req: FastifyRequest, reply: FastifyReply) {
+    try {
+      const { id } = req.params as { id: number }
+      const weakness = await WeaknessDAO.getWeaknessById(id)
+
+      if (!weakness) {
+        return reply.status(404).send({ error: "Eficácia não encontrado" })
+      }
+
+      return reply.status(200).send(weakness)
+    } catch (error) {
+      console.log({ error })
+      return reply.status(500).send({ error: "Erro ao buscar eficácia" })
+    }
+  }
 }

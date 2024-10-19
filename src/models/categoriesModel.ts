@@ -12,21 +12,21 @@ class Category {
 
 class CategoryDAO {
   static async categoryInsert(category: Category) {
-    const sql = "INSERT INTO category (name, description) VALUES ($1, $2)";
-    const values = [category.name, category.description];
+    const sql = "INSERT INTO category (name, description) VALUES ($1, $2)"
+    const values = [category.name, category.description]
 
     try {
-      const result = await dbcon.query(sql, values);
-      return result.rows[0];
+      const result = await dbcon.query(sql, values)
+      return result.rows[0]
     } catch (error) {
-      console.error("Erro ao inserir categoria:", error);
-      throw new Error("Erro ao inserir categoria");
+      console.error("Erro ao inserir categoria:", error)
+      throw new Error("Erro ao inserir categoria")
     }
   }
 
-
   static async categoryUpdate(category: Category, id: number) {
-    const sql = "UPDATE category SET name = $1, description = $2 WHERE category_id = $3"
+    const sql =
+      "UPDATE category SET name = $1, description = $2 WHERE category_id = $3"
     const values = [category.name, category.description, id]
 
     try {
@@ -51,7 +51,8 @@ class CategoryDAO {
   }
 
   static async categoryList() {
-    const sql = "SELECT category_id AS id, name, description, created_at, updated_at FROM category"
+    const sql =
+      "SELECT category_id AS id, name, description, created_at, updated_at FROM category"
 
     try {
       const result = await dbcon.query(sql)
@@ -63,7 +64,8 @@ class CategoryDAO {
   }
 
   static async getCategoryById(id: number) {
-    const sql = "SELECT name, description FROM category, created_at, updated_at WHERE category_id = $1"
+    const sql =
+      "SELECT name, description, created_at, updated_at FROM category WHERE category_id = $1"
 
     try {
       const result = await dbcon.query(sql, [id])
