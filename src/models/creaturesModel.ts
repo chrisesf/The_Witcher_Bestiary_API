@@ -54,9 +54,7 @@ class CreatureDAO {
         }
     }
 
-    static async creatureList(page: number = 1, limit: number = 10) {
-        const offset = (page - 1) * limit;
-
+    static async creatureList() {
         const sql = `
             SELECT 
                 creature.creature_id AS id,
@@ -69,11 +67,12 @@ class CreatureDAO {
                 creature.updated_at 
             FROM 
                 creature 
-            JOIN 
+            LEFT JOIN 
                 weakness ON creature.creature_id = weakness.creature_id 
             GROUP BY 
-                creature.creature_id, creature.name, creature.description, creature.image, creature.category_id, creature.created_at, creature.updated_at
-            LIMIT $1 OFFSET $2;
+                creature.creature_id
+            ORDER BY
+                creature.creature_id;
             `
        
         const totalCountSQL = "SELECT COUNT(*) FROM creature;"
@@ -82,56 +81,51 @@ class CreatureDAO {
             const totalCountResult = await dbcon.query(totalCountSQL);
             const totalCount = parseInt(totalCountResult.rows[0].count, 10);
 
-            const result = await dbcon.query(sql, [limit, offset]);
+            const result = await dbcon.query(sql);
 
             const creatures = result.rows.map(creature => {
-                const weaknessesArray = creature.weaknesses.split(',').map((item: string) => {
-                    return `localhost:3333/item/${item.trim()}`;
-                });
-
                 const categoryArray = `localhost:3333/category/${creature.category}`
 
-                return {
-                    id: creature.id,
-                    name: creature.name,
-                    description: creature.description,
-                    weaknesses: weaknessesArray,
-                    image: creature.image,
-                    category: [categoryArray],
-                    created_at: creature.created_at,
-                    updated_at: creature.updated_at,
-                };
+                if (creature.weaknesses != null) {
+                    const weaknessesArray = creature.weaknesses.split(',').map((item: string) => {
+                        return `localhost:3333/item/${item.trim()}`;
+                    });
+
+                    return {
+                        id: creature.id,
+                        name: creature.name,
+                        description: creature.description,
+                        weaknesses: weaknessesArray,
+                        image: creature.image,
+                        category: [categoryArray],
+                        created_at: creature.created_at,
+                        updated_at: creature.updated_at,
+                    };
+
+                } else {
+                    return {
+                        id: creature.id,
+                        name: creature.name,
+                        description: creature.description,
+                        weaknesses: [null],
+                        image: creature.image,
+                        category: [categoryArray],
+                        created_at: creature.created_at,
+                        updated_at: creature.updated_at,
+                    };
+                }
+                
             });
-
-            const totalPages = Math.ceil(totalCount / limit);
-
-            let nextPage: string | null = null;
-            let previousPage: string | null = null;
-
-            if (page < totalPages) {
-                nextPage = `localhost:3333/creature?page=${page + 1}&limit=${limit}`;
-            } else {
-                nextPage = null;
-            }
-
-            if (page > 1) {
-                previousPage = `localhost:3333/creature?page=${page - 1}&limit=${limit}`;
-            } else {
-                previousPage = null;
-            }
 
             const response = {
                 count: totalCount,
-                totalPages: totalPages,
-                next: nextPage,
-                previous: previousPage,
                 results: creatures,
             };
 
             return response;
         } catch (error) {
-            console.error("Erro ao buscar criaturas com paginação:", error);
-            throw new Error("Erro ao buscar criaturas com paginação");
+            console.error("Erro ao buscar criaturas:", error);
+            throw new Error("Erro ao buscar criaturas");
         }
     }
 
